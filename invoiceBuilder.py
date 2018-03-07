@@ -11,7 +11,7 @@ import os
 import subprocess
 import re
 import time
-from  fileHelper import *
+from fileHelper import *
 
 # Getting data from user
 training_hours = input("How much did you work this month ?\n")
