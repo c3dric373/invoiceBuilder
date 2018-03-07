@@ -3,7 +3,6 @@
 """
 Author: Cedric Milinaire (c3dric373), milinaire.c@gmail.com
 
-
 A little python script that writes the missing data in my invoice files and builds a pdf that will be send to the client, the latex template files are taken from https://github.com/d-koppenhagen/latex-rechnung.git, I readapted them to my need.
 The user only needs to specify how many hours are being charged, the invoice number and the month the invoice refers to.
 """
@@ -11,6 +10,7 @@ The user only needs to specify how many hours are being charged, the invoice num
 import os
 import subprocess
 import re
+import time
 
 # Getting data from user
 training_hours = input("How much did you work this month ?\n")
@@ -30,7 +30,11 @@ def openAndReplace(oldFilePath, newFilePath, toReplace, replaceWith):
     oldFile = open(oldFilePath, "r",encoding=('utf-8'))
     oldText = oldFile.read()
     oldFile.close()
-    newText = oldText.replace(toReplace,replaceWith)
+    for x in toReplace:
+        for y in replaceWith:
+            oldText = oldText.replace(x,y)
+    newText = oldText
+    print(newText.encode('utf-8'))
     newFile = open(newFilePath, "w", encoding=('utf-8'))
     newFile.write(newText)
     newFile.close()
@@ -42,9 +46,10 @@ subprocess.run(['cp','-r',invoice_template_directory,tmp_directory])
 os.chdir(invoice_template_directory)
 
 # Building the invoice file
-openAndReplace("invoice.tex","/tmp/rechnungen/invoice.tex", "#training_hours", training_hours)
+openAndReplace("invoice.tex","/tmp/rechnungen/invoice.tex", ["#training_hours"],[ training_hours])
 
 # Getting the date of today and two weeks from now
+year = subprocess.run(['date', '+%Y'], stdout=subprocess.PIPE).stdout.decode('utf-8')
 date = subprocess.run(['date', '+%d.%m.%y'], stdout=subprocess.PIPE).stdout.decode('utf-8')
 due_date = subprocess.run(['date',"--date=+14 day", '+%d.%m.%y'], stdout=subprocess.PIPE).stdout.decode('utf-8')
 
@@ -53,11 +58,10 @@ date = date.rstrip('\n')
 due_date = due_date.rstrip('\n')
 
 # Building the data file
-openAndReplace("data.tex","/tmp/rechnungen/data.tex","#date",date)
-openAndReplace("data.tex","/tmp/rechnungen/data.tex","#due_date",due_date)
+openAndReplace("data.tex","/tmp/rechnungen/data.tex",["#date","#due_date","#invoice_number"],[ date,due_date,invoice_number])
 
 # Building the main file
-openAndReplace("main.tex","/tmp/rechnungen/main.tex", "#monthYear", month_of_invoice)
+openAndReplace("main.tex","/tmp/rechnungen/main.tex",[ "#monthYear"],[ month_of_invoice + " " + year])
 
 # Building the pdf file moving int into the correct directory and deleting the /tmp/rechnungen directory
 os.chdir(tmp_directory)
@@ -78,4 +82,5 @@ message = ",message=/tmp/body.txt"
 # Thunderbird needs to start from home directory
 os.chdir("/home/c3dric/")
 subprocess.run(['thunderbird','-compose',(client_mail+subject+message+attachment)])
+time.sleep(1)
 subprocess.run(['rm','/tmp/body.txt'])
