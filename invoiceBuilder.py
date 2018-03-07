@@ -34,7 +34,6 @@ def openAndReplace(oldFilePath, newFilePath, toReplace, replaceWith):
         for y in replaceWith:
             oldText = oldText.replace(x,y)
     newText = oldText
-    print(newText.encode('utf-8'))
     newFile = open(newFilePath, "w", encoding=('utf-8'))
     newFile.write(newText)
     newFile.close()
@@ -74,7 +73,6 @@ client_mail = "to=KravMaga-FightClub@gmx.de"
 attachment = ",attachment=" + invoice_path
 subject = ",subject=Rechnung " + month_of_invoice
 tmp_file = open("/tmp/body.txt","w",encoding='utf-8')
-print("debugging")
 tmp_file.write(body)
 tmp_file.close()
 message = ",message=/tmp/body.txt"
