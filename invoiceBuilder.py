@@ -11,6 +11,7 @@ import os
 import subprocess
 import re
 import time
+from  fileHelper import *
 
 # Getting data from user
 training_hours = input("How much did you work this month ?\n")
@@ -24,19 +25,6 @@ tmp_directory = '/tmp/rechnungen/'
 invoice_name = "Facture" + invoice_number + ".pdf"
 invoice_path = invoice_directory + invoice_name
 body = "Hallo Markus und Manuela,\n\n im Anhang findet ihr die Rechnung zum Monat " +         month_of_invoice + ".\n\n Viele Grüße,\n\n Cédric"
-
-# Reading a file and replacing a string with another and writing it in another file
-def openAndReplace(oldFilePath, newFilePath, toReplace, replaceWith):
-    oldFile = open(oldFilePath, "r",encoding=('utf-8'))
-    oldText = oldFile.read()
-    oldFile.close()
-    for x in toReplace:
-        for y in replaceWith:
-            oldText = oldText.replace(x,y)
-    newText = oldText
-    newFile = open(newFilePath, "w", encoding=('utf-8'))
-    newFile.write(newText)
-    newFile.close()
 
 # Creating a temporary directory to build the pdf file later
 subprocess.run(['cp','-r',invoice_template_directory,tmp_directory])
