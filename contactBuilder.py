@@ -1,3 +1,7 @@
+"""
+Author: Cedric Milinaire(c3dric373), milinaire.c@gmail.com
+Building new templates file for a new client, templates file are inspired by https://github.com/d-koppenhagen/latex-rechnung.git
+"""
 import os
 import subprocess
 from fileHelper import *
